@@ -1,0 +1,233 @@
+<%- include('../partials/header', {message: message}) %>
+
+<body id="page-top">
+  <div id="wrapper">
+    <%- include('../partials/slidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+      <div id="content">
+        <%- include('../partials/navbar', { result: user}) %>
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <h1 class="h3 mb-2 text-gray-800"><%= message %></h1>
+          <h5 class="mt-2 mb-2">List of all <%= message %></h5>
+          <div class="row ml-1">
+            Search: <input type='text' id='txt_searchall' class="form-control ml-2 mb-2 vertical-align"
+              style="width: 300px;" placeholder='Search <%= message %>'>
+          </div>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">User</th>
+                <th scope="col">Name</th>
+                <th scope="col">Location</th>
+                <th scope="col">Attributes</th>
+                <th scope="col">Party</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class='notfound' style="display: none;">
+                <td>No record found!!</td>
+              </tr>
+              <%  result.forEach(con => { %>
+              <tr>
+                <td title="<%= con.user %>"><%= con.user.substring(con.user.length - 4, con.user.length) %></td>
+                <td><%= con.name %></td>
+                <td><%= con.location %></td>
+                <td><%= con.attributes %></td>
+                <td><a href="<%= con.party %>" target="_blank"><%= con.party %></a></td>
+                <td>
+                  <div class="row">
+                    <a href="#" data-toggle="modal" data-target="#editUser<%= con._id %>"
+                      title="Edit <%= con.name %>"><i class="fas fa-edit fa-sm fa-fw mr-3"></i></a>
+                    <% if(con.isActive === true) { %>
+                    <a href="#" data-toggle="modal" data-target="#disableUser<%= con._id %>"
+                      title="Disable <%= con.name %>"><i class="fas fa-user-slash fa-sm fa-fw mr-3"></i></a>
+                    <% } else { %>
+                    <a href="#" data-toggle="modal" data-target="#disableUser<%= con._id %>"
+                      title="Enable <%= con.name %>"><i class="fas fa-user fa-sm fa-fw mr-3"></i></a>
+                    <% } %>
+                    <a href="#" data-toggle="modal" data-target="#deleteUser<%= con._id %>"
+                      title="Delete <%= con.name %>"><i class="fas fa-trash fa-sm fa-fw mr-3"></i></a>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- EDIT MODEL-->
+              <div class="modal fade" id="editUser<%= con._id %>" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Edit <%= con.name %></h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body mt-n3">
+                      <form action="/admin/manage/properties/<%= con._id %>/edit?_method=PUT" method="POST">
+                        <div class="form-group">
+                          <label for="name" class="col-form-label col-3 float-left">Name</label>
+                          <input type="text" name="name" class="form-control form-control-sm col-9" minlength="3"
+                            maxlength="18" id="name" value="<%= con.name %>" required>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="location" class="col-form-label col-3 float-left">Location</label>
+                          <input type="text" name="location" class="form-control form-control-sm col-9" minlength="3"
+                            maxlength="25" id="location" value="<%= con.location %>">
+                        </div>
+
+                        <div class="form-group">
+                          <label for="attributes" class="col-form-label col-3 float-left">Attributes</label>
+                          <input type="text" name="attributes" class="form-control form-control-sm col-9" minlength="3"
+                            maxlength="35" id="attributes" value="<%= con.attributes %>" required>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="party" class="col-form-label col-3 float-left">3rd Party</label>
+                          <input type="text" name="party" class="form-control form-control-sm col-9" minlength="3"
+                            maxlength="45" id="party" value="<%= con.party %>">
+                        </div>
+
+                        <div class="modal-footer mt-n2">
+                          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary btn-sm">Save changes</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- DISABLE MODAL-->
+              <div class="modal fade" id="disableUser<%= con._id %>" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Disable <%= con.name %></h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>By selecting disable mode, the particular user can not be access anything of his dashboard
+                        untill the next time you enable his/her</p>
+                      <form action="/admin/manage/properties/<%= con._id %>/active?_method=PUT" method="POST">
+                        <div class="form-group row">
+                          <div class="col-md-4">
+                            <label for="inlineFormCustomSelect">Preference</label>
+                          </div>
+                          <div class="col-md-8">
+                            <select name="isActive" class="form-control form-control-sm" id="inlineFormCustomSelect">
+                              <% if(con.isActive === true) { %>
+                              <option value="true" selected>Enable</option>
+                              <option value="false">Disable</option>
+                              <% } else { %>
+                              <option value="true">Enable</option>
+                              <option value="false" selected>Disable</option>
+                              <% } %>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary btn-sm">Save changes</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- DELETE MODAL-->
+              <div class="modal fade" id="deleteUser<%= con._id %>" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Delete <%= con.name %></h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Once you delete thier profile, you may no longer to access his/her in future. Are you sure?</p>
+                      <form action="/admin/manage/properties/<%= con._id %>/delete?_method=DELETE" method="POST"
+                        id="deleteProperty">
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary btn-sm">Yes, Delete <%= con.name %></button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <% }) %>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <nav aria-label="..." class="pr-3">
+        <% if(pages > 0) { %>
+          <ul class="pagination justify-content-end">
+            <% if(current == 1) { %>
+              <li class="page-item disabled">
+                <a class="page-link">First</a>
+              </li>
+              <% } %>
+            <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
+            <% if( i !== 1) { %>
+              <li class="page-item disabled">
+                <a class="page-link">...</a>
+              </li>
+            <% } %>     
+            <% for( ; i <= (Number(current) + 4) && i <= pages; i++) { %>
+                <% if (i == current) { %>
+                  <li class="page-item active">
+                    <a class="page-link" href="/admin/manage/properties/<%= i %>"><%= i %></a>
+                  </li>
+                <% } else { %>
+                  <li class="page-item">
+                    <a class="page-link" href="/admin/manage/properties/<%= i %>"><%= i %></a>
+                  </li>
+                <% } %>
+                <% if (i == Number(current) + 4 && i < pages) { %>
+                  <li class="page-item disabled">
+                    <a class="page-link">...</a>
+                  </li>
+                <% } %>
+            <% } %>
+            <% if (current == pages) { %>
+              <li class="page-item disabled">
+                <a class="page-link">Last</a>
+              </li>
+            <% } else { %>
+              <li class="page-item">
+                <a class="page-link" href="/admin/manage/properties/<%= pages %>">Last</a>
+              </li>
+            <% } %>
+          </ul>
+        <% } %>
+      </nav>
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Your Website 2020</span>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <%- include('../partials/logout') %>
+  <%- include ('../partials/footer') %>

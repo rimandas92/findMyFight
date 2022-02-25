@@ -1,0 +1,367 @@
+<%- include('../partials/header', {message: message}) %>
+
+<body id="page-top">
+  <div id="wrapper">
+    <%- include('../partials/slidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+      <div id="content">
+        <%- include('../partials/navbar', { result: user}) %>
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800"><%- message %></h1>
+            <a href="#" data-toggle="modal" data-target="#addCompany"
+              class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm"></i> Add
+              Company Details</a>
+          </div>
+
+          <!-- Add Company Details -->
+          <div class="modal fade" id="addCompany" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Add Company Details</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="/admin/manage/companies" method="POST" enctype="multipart/form-data">
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <label for="name" class="col-form-label float-left">Company Name</label>
+                      </div>
+                      <div class="col-md-8">
+                        <input type="text" name="name" class="form-control form-control-sm" minlength="2" maxlength="18"
+                          id="name" placeholder="Zillow" required>
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <label for="name" class="col-form-label float-left">Service</label>
+                      </div>
+                      <div class="col-md-8">
+                        <input type="text" name="service" class="form-control form-control-sm" minlength="2" maxlength="18"
+                          id="service" placeholder="Designer" required>
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <label for="logo" class="col-form-label float-left">Company Logo</label>
+                      </div>
+                      <div class="col-md-8">
+                        <div class="custom-file">
+                          <input type="file" name="image" class="custom-file-input form-control-sm" id="customFile">
+                          <label class="custom-file-label col-form-label-sm" for="customFile">Upload Company
+                            Logo</label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <label for="url" class="col-form-label float-left">Company URL</label>
+                      </div>
+                      <div class="col-md-8">
+                        <input type="text" name="url" class="form-control form-control-sm" minlength="2" maxlength="18"
+                          id="url" placeholder="www.zillow.com" required>
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <label for="description" class="col-form-label float-left">Company Description</label>
+                      </div>
+                      <div class="col-md-8">
+                        <textarea class="form-control" id="description" name="desc" rows="3" maxlength="200"
+                          placeholder="Company description (optional)"></textarea>
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <label for="email" class="col-form-label float-left">Company Email</label>
+                      </div>
+                      <div class="col-md-8">
+                        <input type="text" name="email" class="form-control form-control-sm" id="email" minlength="3"
+                          maxlength="45" placeholder="support@zillow.com">
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <label for="address" class="col-form-label float-left">Company Address</label>
+                      </div>
+                      <div class="col-md-8">
+                        <input type="text" name="address" class="form-control form-control-sm" id="address"
+                          minlength="3" maxlength="45" placeholder="106, 6th Floor, Near Airport, New York">
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <label for="contact" class="col-form-label float-left">Company Contact</label>
+                      </div>
+                      <div class="col-md-8">
+                        <input type="text" name="contact" class="form-control form-control-sm" id="contact"
+                          minlength="3" maxlength="20" placeholder="084-654-789">
+                      </div>
+                    </div>
+
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary btn-sm">Add Details</button>
+                    </div>
+                  </form>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- CONTENT ROW -->
+          <h5 class="mt-2 mb-2">List of all <%= message %></h5>
+          <div class="row ml-1">
+            Search: <input type='text' id='txt_searchall' class="form-control ml-2 mb-2 vertical-align"
+              style="width: 300px;" placeholder='Search <%= message %>'>
+          </div>
+
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Service</th>
+                <th scope="col">Description</th>
+                <th scope="col">URL</th>
+                <th scope="col">Email</th>
+                <th scope="col">Address</th>
+                <th scope="col">Contact</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class='notfound' style="display: none;">
+                <td>No record found!!</td>
+              </tr>
+
+              <% result.forEach(company => { %>
+              <tr>
+                <td><%= company.name %></td>
+                <td><%= company.service %></td>
+                <td><%= company.desc %></td>
+                <td><%= company.url %></td>
+                <td><%= company.email %></td>
+                <td><%= company.address %></td>
+                <td><%= company.contact %></td>
+                <td>
+                  <div class="row">
+                    <a href="#" data-toggle="modal" data-target="#edit<%= company._id %>"
+                      title="Edit <%= company.firstName %>"><i class="fas fa-edit fa-sm fa-fw mr-3"></i></a>
+                    <a href="#" data-toggle="modal" data-target="#delete<%= company._id %>"
+                      title="Delete <%= company.firstName %>"><i class="fas fa-trash fa-sm fa-fw mr-3"></i></a>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Edit MODAL -->
+              <div class="modal fade" id="edit<%= company._id %>" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Edit Company Details</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <form action="/admin/manage/companies/<%= company._id %>/edit?_method=PUT" method="POST"
+                        enctype="multipart/form-data">
+                        <div class="form-group row">
+                          <div class="col-md-4">
+                            <label for="name" class="col-form-label float-left">Company Name</label>
+                          </div>
+                          <div class="col-md-8">
+                            <input type="text" name="name" class="form-control form-control-sm" minlength="2"
+                              maxlength="18" id="name" placeholder="Zillow" value="<%= company.name %>" required>
+                          </div>
+                        </div>
+
+                        <div class="form-group row">
+                          <div class="col-md-4">
+                            <label for="name" class="col-form-label float-left">Service</label>
+                          </div>
+                          <div class="col-md-8">
+                            <input type="text" name="service" class="form-control form-control-sm" minlength="2"
+                              maxlength="18" id="service" placeholder="Designer" value="<%= company.service %>" required>
+                          </div>
+                        </div>
+
+                        <div class="form-group row">
+                          <div class="col-md-4">
+                            <label for="logo" class="col-form-label float-left">Company Logo</label>
+                          </div>
+                          <div class="col-md-8">
+                            <div class="custom-file">
+                              <input type="file" name="image" class="custom-file-input form-control-sm"
+                                value="<%= company.image %>" id="customFile">
+                              <label class="custom-file-label col-form-label-sm" for="customFile">Upload Company
+                                Logo</label>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="form-group row">
+                          <div class="col-md-4">
+                            <label for="url" class="col-form-label float-left">Company URL</label>
+                          </div>
+                          <div class="col-md-8">
+                            <input type="text" name="url" class="form-control form-control-sm" minlength="2"
+                              maxlength="18" id="url" placeholder="www.zillow.com" value="<%= company.url %>" required>
+                          </div>
+                        </div>
+
+                        <div class="form-group row">
+                          <div class="col-md-4">
+                            <label for="description" class="col-form-label float-left">Company Description</label>
+                          </div>
+                          <div class="col-md-8">
+                            <textarea class="form-control" id="description" name="desc"
+                              rows="3" maxlength="200" placeholder="<%= company.desc %>"><%= company.desc %></textarea>
+                          </div>
+                        </div>
+
+                        <div class="form-group row">
+                          <div class="col-md-4">
+                            <label for="email" class="col-form-label float-left">Company Email</label>
+                          </div>
+                          <div class="col-md-8">
+                            <input type="text" name="email" class="form-control form-control-sm" id="email"
+                              minlength="3" maxlength="45" placeholder="support@zillow.com"
+                              value="<%= company.email %>">
+                          </div>
+                        </div>
+
+                        <div class="form-group row">
+                          <div class="col-md-4">
+                            <label for="address" class="col-form-label float-left">Company Address</label>
+                          </div>
+                          <div class="col-md-8">
+                            <input type="text" name="address" class="form-control form-control-sm" id="address"
+                              minlength="3" maxlength="45" placeholder="106, 6th Floor, Near Airport, New York"
+                              value="<%= company.address %>">
+                          </div>
+                        </div>
+
+                        <div class="form-group row">
+                          <div class="col-md-4"> 
+                            <label for="contact" class="col-form-label float-left">Company Contact</label>
+                          </div>
+                          <div class="col-md-8">
+                            <input type="text" name="contact" class="form-control form-control-sm" id="contact"
+                              minlength="3" maxlength="20" placeholder="084-654-789" value="<%= company.contact %>">
+                          </div>
+                        </div>
+
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary btn-sm">Update Details</button>
+                        </div>
+                      </form>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- DELETE MODAL-->
+              <div class="modal fade" id="delete<%= company._id %>" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Delete <%= company.name %></h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Once you delete this details, you may no longer to access in future. Are you sure?</p>
+                      <form action="/admin/manage/companies/<%= company._id %>/delete?_method=DELETE" method="POST">
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary btn-sm">Yes, Delete <%= company.name %></button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+        <!-- Pagination -->
+        <nav aria-label="..." class="pr-3">
+          <% if(pages > 0) { %>
+            <ul class="pagination justify-content-end">
+              <% if(current == 1) { %>
+                <li class="page-item disabled">
+                  <a class="page-link">First</a>
+                </li>
+                <% } %>
+              <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
+              <% if( i !== 1) { %>
+                <li class="page-item disabled">
+                  <a class="page-link">...</a>
+                </li>
+              <% } %>     
+              <% for( ; i <= (Number(current) + 4) && i <= pages; i++) { %>
+                  <% if (i == current) { %>
+                    <li class="page-item active">
+                      <a class="page-link" href="/admin/manage/companies/<%= i %>"><%= i %></a>
+                    </li>
+                  <% } else { %>
+                    <li class="page-item">
+                      <a class="page-link" href="/admin/manage/companies/<%= i %>"><%= i %></a>
+                    </li>
+                  <% } %>
+                  <% if (i == Number(current) + 4 && i < pages) { %>
+                    <li class="page-item disabled">
+                      <a class="page-link">...</a>
+                    </li>
+                  <% } %>
+              <% } %>
+              <% if (current == pages) { %>
+                <li class="page-item disabled">
+                  <a class="page-link">Last</a>
+                </li>
+              <% } else { %>
+                <li class="page-item">
+                  <a class="page-link" href="/admin/manage/companies/<%= pages %>">Last</a>
+                </li>
+              <% } %>
+            </ul>
+          <% } %>
+        </nav>
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Your Website 2020</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Logout Modal-->
+  <%- include('../partials/logout') %>
+  <%- include ('../partials/footer') %>

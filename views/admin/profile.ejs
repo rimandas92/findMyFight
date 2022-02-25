@@ -1,0 +1,40 @@
+<%- include('../partials/header', {message: message}) %>
+
+<body id="page-top">
+  <div id="wrapper">
+    <%- include('../partials/slidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+      <div id="content">
+        <%- include('../partials/navbar', { result: result}) %>
+
+        <!-- Main Page conent-->
+        <div class="container-fluid">
+
+          <h1 class="h3 mb-4 text-gray-800"><%= message %></h1>
+          <div class="row mt-4">
+            <div class="col-md-2">
+              <p class="font-weight-normal mb-2">First name</p>
+              <p class="font-weight-normal mb-2">Last name</p>
+              <p class="font-weight-normal mb-2">Email</p>
+            </div>
+            <div class="col-md-10">
+              <p class="font-weight-bold mb-2"><%= result.firstName %></p>
+              <p class="font-weight-bold mb-2"><%= result.lastName %></p>
+              <p class="font-weight-bold mb-2"><%= result.username %></p>
+            </div>
+          </div>
+        </div>
+        <!-- End of the main page content-->
+    </div>
+    <footer class="sticky-footer bg-white">
+      <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+          <span>Copyright &copy; Your Website 2020</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Logout Modal-->
+  <%- include('../partials/logout') %>
+  <%- include ('../partials/footer') %>
